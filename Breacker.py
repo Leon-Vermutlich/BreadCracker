@@ -14,8 +14,6 @@ from bip_utils import (
     Bip44Changes,
     Bip39WordsNum,
 )
-import pyfiglet
-import curses
 
 LOG_FILE_NAME = "breadcracker.log"
 ENV_FILE_NAME = "breadcracker.env"
@@ -31,16 +29,15 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler(log_file_path),  # Log to a file
-        logging.StreamHandler(sys.stdout),  # Log to standard output
-    ],
-)
+        logging.FileHandler(log_file_path), 
+        logging.StreamHandler(sys.stdout),  
+    ]
 
 if not os.path.exists(env_file_path):
     print("The breadcracker.env file does not exist. Let's create it.")
     etherscan_api_key = input("Enter your Etherscan API key: ").strip()
 
-    with open(env_file_path, "w") as env_file:
+ with open(env_file_path, "W") as env_file:
         env_file.write(f"ETHERSCAN_API_KEY={etherscan_api_key}\n")
 
 load_dotenv(env_file_path)
@@ -76,7 +73,7 @@ def bip44_ETH_wallet_from_seed(seed):
         .Change(Bip44Changes.CHAIN_EXT)
         .AddressIndex(0)
     )
-    eth_address = bip44_acc_ctx.PublicKey().ToAddress()
+ eth_address = bip44_acc_ctx.PublicKey().ToAddress()
     return eth_address
 
 def bip44_BTC_seed_to_address(seed):
@@ -108,7 +105,7 @@ def check_ETH_balance(address, etherscan_api_key, retries=3, delay=5):
             else:
                 logging.error("Error checking balance: %s", str(e))
                 return 0
-
+    
 def check_BTC_balance(address, retries=3, delay=5):
     for attempt in range(retries):
         try:
@@ -148,7 +145,6 @@ def main(stdscr):
         etherscan_api_key = os.getenv("ETHERSCAN_API_KEY")
         if not etherscan_api_key:
             raise ValueError(
-                "The Etherscan API key must be set in the environment variables."
             )
         ETH_balance = check_ETH_balance(ETH_address, etherscan_api_key)
 
@@ -168,8 +164,3 @@ def main(stdscr):
 
 if __name__ == "__main__":
     curses.wrapper(main)
-
-
-
-
-
